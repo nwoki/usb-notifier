@@ -1,4 +1,4 @@
-include_directories(${CMAKE_SOURCE_DIR}/include)
+include_directories(${PROJECT_SOURCE_DIR}/include)
 
 set(example_SRCS
     main.cpp
