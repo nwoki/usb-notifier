@@ -12,9 +12,9 @@ class UsbNotifierPrivate;
 
 /**
  * @class UsbNotifier
- * @brief
+ * @brief Usb notification class
  *
- *
+ * This class notifies when a usb device is pluggin in or detached from the current system
  *
  * @author Francesco Nwokeka <francesco.nwokeka@gmail.com>
  */
