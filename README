@@ -1,0 +1,4 @@
+A Qt/C++ library used to watch for usb events.
+
+For now the library looks for usb devices via libusb. In the future DBus will be available
+as a solution
