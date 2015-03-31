@@ -3,8 +3,12 @@
 
 #include <QtCore/QThread>
 
+
+namespace UsbNotifier {
+
 class UsbDevice;
 class UsbNotifierPrivate;
+
 
 class UsbNotifier : public QThread
 {
@@ -24,5 +28,6 @@ private:
     UsbNotifierPrivate * const d;
 };
 
+}
 
 #endif  // USBNOTIFIER_H

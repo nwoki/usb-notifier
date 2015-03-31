@@ -1,5 +1,7 @@
 class libusb_device;
 
+namespace UsbNotifier {
+
 class UsbDevicePrivate
 {
 public:
@@ -9,3 +11,5 @@ public:
 
     libusb_device *libusbDevice;
 };
+
+}

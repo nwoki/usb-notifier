@@ -3,7 +3,9 @@
 
 #include <QtCore/QObject>
 
-class UsbNotifier;
+namespace UsbNotifier {
+    class UsbNotifier;
+};
 
 
 class TestConnect : public QObject
@@ -15,7 +17,7 @@ public:
     ~TestConnect();
 
 private:
-    UsbNotifier *m_usb;
+    UsbNotifier::UsbNotifier *m_usb;
 };
 
 #endif  // TESTCONNECT_H

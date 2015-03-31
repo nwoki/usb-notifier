@@ -6,6 +6,8 @@
 
 #include <QtCore/QDebug>
 
+namespace UsbNotifier {
+
 static UsbNotifier *s_me = 0;
 
 
@@ -63,4 +65,5 @@ void UsbNotifier::run()
     }
 }
 
+}
 

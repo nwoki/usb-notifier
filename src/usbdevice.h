@@ -4,7 +4,11 @@
 #include <QtCore/QObject>
 
 class libusb_device;
+
+namespace UsbNotifier {
+
 class UsbDevicePrivate;
+
 
 class UsbDevice : public QObject
 {
@@ -17,6 +21,8 @@ public:
 
 private:
     UsbDevicePrivate * const d;
+};
+
 };
 
 #endif  // USBDEVICE_H

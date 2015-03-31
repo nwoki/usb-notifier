@@ -1,3 +1,5 @@
+namespace UsbNotifier {
+
 class UsbNotifierPrivate
 {
 public:
@@ -11,3 +13,5 @@ public:
     int product;
     bool supportsHotplug;
 };
+
+}

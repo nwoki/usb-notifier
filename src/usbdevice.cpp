@@ -3,6 +3,7 @@
 
 #include <libusb-1.0/libusb.h>
 
+namespace UsbNotifier {
 
 UsbDevice::UsbDevice(const UsbDevice &dev)
     : QObject(dev.parent())
@@ -21,4 +22,6 @@ UsbDevice::~UsbDevice()
 {
     // TODO delete libusbdevice (close it first if open)
     delete d;
+}
+
 }
