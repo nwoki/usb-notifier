@@ -47,9 +47,29 @@ UsbDevice::~UsbDevice()
     delete d;
 }
 
+int UsbDevice::address() const
+{
+    return d->address;
+}
+
 QString UsbDevice::manufacturer() const
 {
     return d->manufacturer;
+}
+
+QString UsbDevice::product() const
+{
+    return d->product;
+}
+
+int UsbDevice::productId() const
+{
+    return d->productId;
+}
+
+int UsbDevice::vendorId() const
+{
+    return d->vendorId;
 }
 
 }
