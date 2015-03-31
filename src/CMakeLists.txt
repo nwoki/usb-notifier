@@ -1,4 +1,5 @@
 set(usb-notifier_SRCS
+    usbdevice.cpp
     usbnotifier.cpp
 )
 

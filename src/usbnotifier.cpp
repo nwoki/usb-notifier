@@ -1,3 +1,4 @@
+#include "usbdevice.h"
 #include "usbnotifier.h"
 #include "usbnotifier_p.h"
 
@@ -10,7 +11,7 @@ static UsbNotifier *s_me = 0;
 
 int deviceInsertCallback(libusb_context *ctx, libusb_device *device, libusb_hotplug_event event, void *user_data)
 {
-    Q_EMIT s_me->deviceAttached();
+    Q_EMIT s_me->deviceAttached(new UsbDevice(device));
     return 0;
 }
 
@@ -18,6 +19,8 @@ UsbNotifier::UsbNotifier(int vendor, int product, QObject *parent)
     : QThread(parent)
     , d(new UsbNotifierPrivate)
 {
+    qRegisterMetaType<UsbDevice>("UsbDevice");
+
     if (!s_me) {
         s_me = this;
     }

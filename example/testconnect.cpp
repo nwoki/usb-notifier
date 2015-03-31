@@ -1,5 +1,6 @@
 #include "testconnect.h"
 
+#include <UsbNotifier/UsbDevice>
 #include <UsbNotifier/UsbNotifier>
 #include <libusb-1.0/libusb.h>
 
@@ -9,7 +10,7 @@ TestConnect::TestConnect(QObject *parent)
 {
     m_usb->start();
 
-    connect(m_usb, &UsbNotifier::deviceAttached, [] () {
+    connect(m_usb, &UsbNotifier::deviceAttached, [] (UsbDevice *dev) {
         qDebug("[TestConnect::TestConnect] GOT A DEVICE");
     });
 }

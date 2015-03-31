@@ -3,6 +3,7 @@
 
 #include <QtCore/QThread>
 
+class UsbDevice;
 class UsbNotifierPrivate;
 
 class UsbNotifier : public QThread
@@ -14,7 +15,7 @@ public:
     ~UsbNotifier();
 
 Q_SIGNALS:
-    void deviceAttached();
+    void deviceAttached(UsbDevice *device);
 
 protected:
     void run();
