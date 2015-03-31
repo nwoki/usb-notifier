@@ -1,6 +1,7 @@
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
 set(example_SRCS
+    inherit.cpp
     main.cpp
     testconnect.cpp
 )

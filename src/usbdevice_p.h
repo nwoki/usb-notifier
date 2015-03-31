@@ -1,10 +1,22 @@
+#include <QtCore/QSharedData>
+
 class libusb_device;
 
 namespace UsbNotifier {
 
-class UsbDevicePrivate
+class UsbDevicePrivate : public QSharedData
 {
 public:
+    UsbDevicePrivate(const UsbDevicePrivate &other)
+        : QSharedData(other)
+        , libusbDevice(other.libusbDevice)
+        , address(other.address)
+        , productId(other.productId)
+        , vendorId(other.vendorId)
+        , manufacturer(other.manufacturer)
+        , product(other.product)
+    {}
+
     UsbDevicePrivate()
         : libusbDevice(nullptr)
         , address(0)

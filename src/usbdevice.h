@@ -2,6 +2,7 @@
 #define USBDEVICE_H
 
 #include <QtCore/QObject>
+#include <QtCore/QSharedDataPointer>
 
 class libusb_device;
 
@@ -53,7 +54,7 @@ public:
 
 
 private:
-    UsbDevicePrivate * const d;
+    QSharedDataPointer<UsbDevicePrivate> d;
 };
 
 };

@@ -8,7 +8,7 @@ namespace UsbNotifier {
 
 UsbDevice::UsbDevice(const UsbDevice &dev)
     : QObject(dev.parent())
-    , d(new UsbDevicePrivate)
+    , d(dev.d)
 {
 }
 
@@ -44,7 +44,7 @@ UsbDevice::UsbDevice(QObject *parent)
 UsbDevice::~UsbDevice()
 {
     // TODO delete libusbdevice (close it first if open)
-    delete d;
+    qDebug("[UsbDevice::~UsbDevice]");
 }
 
 int UsbDevice::address() const

@@ -1,3 +1,4 @@
+#include "inherit.h"
 #include "testconnect.h"
 
 #include <UsbNotifier/UsbDevice>
@@ -16,6 +17,10 @@ TestConnect::TestConnect(QObject *parent)
 
         qDebug() << "MANUFACTURER: " << dev->manufacturer();
         qDebug() << "PRODUCT: " << dev->product();
+
+        // create inhereted obj to test
+        Inherit *in = new Inherit(dev);
+        delete in;
     });
 
     m_usb->start();
