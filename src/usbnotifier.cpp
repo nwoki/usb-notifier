@@ -10,6 +10,13 @@ namespace UsbNotifier {
 
 static UsbNotifier *s_me = 0;
 
+int deviceDetachCallback(libusb_context *ctx, libusb_device *device, libusb_hotplug_event event, void *user_data)
+{
+    Q_EMIT s_me->deviceDetached(libusb_get_device_address(device));
+
+    // TODO remove the device from the cache
+    return 0;
+}
 
 int deviceInsertCallback(libusb_context *ctx, libusb_device *device, libusb_hotplug_event event, void *user_data)
 {
@@ -77,7 +84,8 @@ UsbNotifier::UsbNotifier(int vendor, int product, QObject *parent)
     d->vendor = vendor;
     d->product = product;
 
-    libusb_hotplug_callback_handle handle;
+    libusb_hotplug_callback_handle attachHandle;
+    libusb_hotplug_callback_handle detachHandle;
     libusb_init(NULL);
 
     if (libusb_has_capability(LIBUSB_CAP_HAS_HOTPLUG)) {
@@ -95,7 +103,20 @@ UsbNotifier::UsbNotifier(int vendor, int product, QObject *parent)
                                                 , LIBUSB_HOTPLUG_MATCH_ANY
                                                 , &deviceInsertCallback
                                                 , NULL
-                                                , &handle);
+                                                , &attachHandle);
+
+    // TODO handle callback registration fail
+    qDebug() << "CALLBACK BIND RESULT: " << result;
+
+    result = libusb_hotplug_register_callback(NULL
+                                            , LIBUSB_HOTPLUG_EVENT_DEVICE_LEFT
+                                            , LIBUSB_HOTPLUG_ENUMERATE
+                                            , d->vendor == 0 ? LIBUSB_HOTPLUG_MATCH_ANY : d->vendor
+                                            , d->product == 0 ? LIBUSB_HOTPLUG_MATCH_ANY : d->product
+                                            , LIBUSB_HOTPLUG_MATCH_ANY
+                                            , &deviceDetachCallback
+                                            , NULL
+                                            , &detachHandle);
 
     // TODO handle callback registration fail
     qDebug() << "CALLBACK BIND RESULT: " << result;

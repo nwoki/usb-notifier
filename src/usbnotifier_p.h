@@ -1,3 +1,5 @@
+// TODO keep a cache of the usb devices
+
 namespace UsbNotifier {
 
 class UsbNotifierPrivate

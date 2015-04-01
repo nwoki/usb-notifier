@@ -40,8 +40,17 @@ public:
     ~UsbNotifier();
 
 Q_SIGNALS:
-    /** emitted when a device has beed attached to the system */
+    /**
+     * emitted when a device has beed attached to the system
+     * @param device pointer to the UsbNotifier::UsbDevice object created on the event
+     */
     void deviceAttached(UsbDevice *device);
+
+    /**
+     * emitted when a device has been detached
+     * @param deviceAddress address of the device detached from the machine
+     */
+    void deviceDetached(int deviceAddress);
 
 protected:
     void run();
