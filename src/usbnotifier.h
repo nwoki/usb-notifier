@@ -3,6 +3,8 @@
 
 #include <QtCore/QThread>
 
+class libusb_device;
+
 
 namespace UsbNotifier {
 
@@ -38,6 +40,8 @@ public:
      */
     UsbNotifier(int vendor = 0, int product = 0, QObject *parent = 0);
     ~UsbNotifier();
+
+    UsbDevice* extractUsbDevice(libusb_device *device);
 
 Q_SIGNALS:
     /**

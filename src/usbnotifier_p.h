@@ -1,4 +1,4 @@
-// TODO keep a cache of the usb devices
+#include "usbdevice.h"
 
 namespace UsbNotifier {
 

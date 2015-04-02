@@ -20,52 +20,13 @@ int deviceDetachCallback(libusb_context *ctx, libusb_device *device, libusb_hotp
 
 int deviceInsertCallback(libusb_context *ctx, libusb_device *device, libusb_hotplug_event event, void *user_data)
 {
-    struct libusb_device_descriptor descriptor;
-    struct libusb_device_handle *myHandle = nullptr;
-    int operationResult = 0;
+    Q_UNUSED(user_data)
 
-    if (libusb_get_device_descriptor(device, &descriptor) < 0) {
-        qDebug("COMPLETE FAIL");
-        return -1;
+    UsbDevice *attachedDevice = s_me->extractUsbDevice(device);
+
+    if (attachedDevice) {
+        Q_EMIT s_me->deviceAttached(attachedDevice);
     }
-
-    // I need to open the device to get more information about the usb
-    operationResult = libusb_open(device, &myHandle);
-
-    if (operationResult < 0) {
-        qDebug() << "UsbNotifier::deviceInsertCallback - Can't open usb device @ " << libusb_get_device_address(device) << " ERROR NO: " << operationResult;
-        return -1;
-    }
-
-    char manufacturer[256];
-    char product[256];
-
-    operationResult = libusb_get_string_descriptor_ascii(myHandle
-                                                        , descriptor.iManufacturer
-                                                        , (unsigned char*)manufacturer
-                                                        , sizeof(manufacturer));
-
-    if (operationResult < 0) {
-        qDebug() << "UsbNotifier::deviceInsertCallback - something went wrong while extracting the manufacturer";
-    }
-
-    operationResult = libusb_get_string_descriptor_ascii(myHandle
-                                                        , descriptor.iProduct
-                                                        , (unsigned char*)product
-                                                        , sizeof(product));
-
-    if (operationResult < 0) {
-        qDebug() << "UsbNotifier::deviceInsertCallback - something went wrong while extracting the product";
-    }
-
-    libusb_close(myHandle);
-
-    Q_EMIT s_me->deviceAttached(new UsbDevice(libusb_get_device_address(device)
-                                            , descriptor.idVendor
-                                            , descriptor.idProduct
-                                            , manufacturer
-                                            , product
-                                            , device));
 
     return 0;
 }
@@ -125,12 +86,100 @@ UsbNotifier::UsbNotifier(int vendor, int product, QObject *parent)
 UsbNotifier::~UsbNotifier()
 {
     libusb_exit(NULL);
-
     delete d;
 }
 
+UsbDevice* UsbNotifier::extractUsbDevice(libusb_device *device)
+{
+    struct libusb_device_descriptor descriptor;
+    struct libusb_device_handle *myHandle = nullptr;
+    int operationResult = 0;
+
+    if (libusb_get_device_descriptor(device, &descriptor) < 0) {
+        qDebug("COMPLETE FAIL");
+        return nullptr;
+    }
+
+    // I need to open the device to get more information about the usb
+    operationResult = libusb_open(device, &myHandle);
+
+    if (operationResult < 0) {
+        qDebug() << "UsbNotifier::deviceInsertCallback - Can't open usb device @ " << libusb_get_device_address(device) << " ERROR NO: " << operationResult;
+        return nullptr;
+    }
+
+    char manufacturer[256];
+    char product[256];
+
+    operationResult = libusb_get_string_descriptor_ascii(myHandle
+    , descriptor.iManufacturer
+    , (unsigned char*)manufacturer
+    , sizeof(manufacturer));
+
+    if (operationResult < 0) {
+        qDebug() << "UsbNotifier::deviceInsertCallback - something went wrong while extracting the manufacturer";
+        return nullptr;
+    }
+
+    operationResult = libusb_get_string_descriptor_ascii(myHandle
+    , descriptor.iProduct
+    , (unsigned char*)product
+    , sizeof(product));
+
+    if (operationResult < 0) {
+        qDebug() << "UsbNotifier::deviceInsertCallback - something went wrong while extracting the product";
+        return nullptr;
+    }
+
+    libusb_close(myHandle);
+
+    return new UsbDevice(libusb_get_device_address(device)
+                        , descriptor.idVendor
+                        , descriptor.idProduct
+                        , manufacturer
+                        , product
+                        , device);
+}
+
+
 void UsbNotifier::run()
 {
+    // do a quick check for already plugged in usb devices
+    int result = 0;
+    libusb_device **deviceList;
+
+    result = libusb_get_device_list(NULL, &deviceList);
+
+    if (result < 0) {
+        // TODO handle error
+        qDebug() << "[UsbNotifier::run] result value: " << result;
+        qDebug() << "UsbNotifier::run] ERROR: " << libusb_error_name(result);
+    } else {
+        libusb_device_handle *handle = nullptr;
+
+        for (int i = 0; i < result; ++i) {
+            // test if the device is usable. There might be some usb device which we don't have permission
+            // to operate on. This test is done by a simple libusb_open/close test.
+            if (libusb_open(deviceList[i], &handle) == LIBUSB_SUCCESS) {
+                libusb_close(handle);
+
+                UsbDevice *usbDevice = extractUsbDevice(deviceList[i]);
+
+                if (usbDevice && (d->product == 0 || d->vendor == 0)) {
+                    Q_EMIT deviceAttached(usbDevice);
+                } else {
+                    if (usbDevice
+                        && (usbDevice->productId() == d->product && usbDevice->vendorId() == d->vendor)) {
+                        Q_EMIT deviceAttached(usbDevice);
+                    }
+                }
+            }
+        }
+
+        libusb_free_device_list(deviceList, 1);
+    }
+
+    // and now start watching for events
     while (1) {
         libusb_handle_events(NULL);
     }
