@@ -21,7 +21,6 @@ int deviceDetachCallback(libusb_context *ctx, libusb_device *device, libusb_hotp
 int deviceInsertCallback(libusb_context *ctx, libusb_device *device, libusb_hotplug_event event, void *user_data)
 {
     Q_UNUSED(user_data)
-
     UsbDevice *attachedDevice = s_me->extractUsbDevice(device);
 
     if (attachedDevice) {
@@ -48,6 +47,7 @@ UsbNotifier::UsbNotifier(int vendor, int product, QObject *parent)
     libusb_hotplug_callback_handle attachHandle;
     libusb_hotplug_callback_handle detachHandle;
     libusb_init(NULL);
+    libusb_set_debug(NULL, LIBUSB_LOG_LEVEL_WARNING);
 
     if (libusb_has_capability(LIBUSB_CAP_HAS_HOTPLUG)) {
         // TODO setup hotplug callbacks
@@ -85,7 +85,13 @@ UsbNotifier::UsbNotifier(int vendor, int product, QObject *parent)
 
 UsbNotifier::~UsbNotifier()
 {
+    d->end = true;
+    terminate();
+
+    // callbacks are eliminated on exit
+    // http://libusb.sourceforge.net/api-1.0/hotplug.html
     libusb_exit(NULL);
+
     delete d;
 }
 
@@ -146,6 +152,7 @@ void UsbNotifier::run()
 {
     // do a quick check for already plugged in usb devices
     int result = 0;
+    d->end = false;
     libusb_device **deviceList;
 
     result = libusb_get_device_list(NULL, &deviceList);
@@ -180,7 +187,8 @@ void UsbNotifier::run()
     }
 
     // and now start watching for events
-    while (1) {
+    setTerminationEnabled(true);
+    while (!d->end) {
         libusb_handle_events(NULL);
     }
 }
