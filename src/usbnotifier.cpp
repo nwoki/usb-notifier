@@ -4,6 +4,8 @@
 
 #include <libusb-1.0/libusb.h>
 
+#include <sys/time.h>
+
 #include <QtCore/QDebug>
 
 namespace UsbNotifier {
@@ -87,6 +89,9 @@ UsbNotifier::~UsbNotifier()
 {
     d->end = true;
     terminate();
+
+    struct timeval emitTimer = (struct timeval){0};
+    libusb_handle_events_timeout_completed(NULL, &emitTimer, NULL);
 
     // callbacks are eliminated on exit
     // http://libusb.sourceforge.net/api-1.0/hotplug.html
