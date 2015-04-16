@@ -16,5 +16,5 @@ set_target_properties(usbnotifier PROPERTIES
 qt5_use_modules(usbnotifier Core)
 
 # link with libusb
-target_link_libraries(usbnotifier usb)
+target_link_libraries(usbnotifier usb-1.0)
 
