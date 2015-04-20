@@ -27,7 +27,9 @@ class UsbDevice : public QObject
 public:
     UsbDevice(const UsbDevice &dev);
     UsbDevice(int address
+            , int busNumber
             , int vendorId
+            , int portNumber
             , int productId
             , char *manufacturer
             , char *product
@@ -40,8 +42,14 @@ public:
     /** @return the usb address for the device */
     int address() const;
 
+    /** @return the usb bus number of the device */
+    int busNumber() const;
+
     /** @return the manufacturer of the device */
     QString manufacturer() const;
+
+    /** @return the usb port number */
+    int portNumber() const;
 
     /** @return the device product name */
     QString product() const;

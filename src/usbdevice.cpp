@@ -13,7 +13,9 @@ UsbDevice::UsbDevice(const UsbDevice &dev)
 }
 
 UsbDevice::UsbDevice(int address
+                , int busNumber
                 , int vendorId
+                , int portNumber
                 , int productId
                 , char *manufacturer
                 , char *product
@@ -23,9 +25,11 @@ UsbDevice::UsbDevice(int address
     , d(new UsbDevicePrivate)
 {
     d->address = address;
+    d->busNumber = busNumber;
     d->vendorId = vendorId;
     d->productId = productId;
     d->manufacturer = QString(manufacturer);
+    d->portNumber = portNumber;
     d->product = QString(product);
     d->libusbDevice = device;
 }
@@ -34,10 +38,6 @@ UsbDevice::UsbDevice(QObject *parent)
     : QObject(parent)
     , d(new UsbDevicePrivate)
 {
-    d->address = 0;
-    d->vendorId = 0;
-    d->productId = 0;
-    d->libusbDevice = nullptr;
 }
 
 
@@ -52,9 +52,19 @@ int UsbDevice::address() const
     return d->address;
 }
 
+int UsbDevice::busNumber() const
+{
+    return d->busNumber;
+}
+
 QString UsbDevice::manufacturer() const
 {
     return d->manufacturer;
+}
+
+int UsbDevice::portNumber() const
+{
+    return d->portNumber;
 }
 
 QString UsbDevice::product() const

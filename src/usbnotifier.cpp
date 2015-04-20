@@ -145,7 +145,9 @@ UsbDevice* UsbNotifier::extractUsbDevice(libusb_device *device)
     libusb_close(myHandle);
 
     return new UsbDevice(libusb_get_device_address(device)
+                        , libusb_get_bus_number(device)
                         , descriptor.idVendor
+                        , libusb_get_port_number(device)
                         , descriptor.idProduct
                         , manufacturer
                         , product
