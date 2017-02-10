@@ -3,7 +3,7 @@
 ######################################################################
 
 TEMPLATE = lib
-TARGET = usb-notifier
+TARGET = usbnotifier
 INCLUDEPATH += include
 
 QT += core
