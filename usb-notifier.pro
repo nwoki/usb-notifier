@@ -15,6 +15,5 @@ HEADERS += \
            src/usbnotifier.h \
            src/usbnotifier_p.h
 SOURCES += \
-           example/testconnect.cpp \
            src/usbdevice.cpp \
            src/usbnotifier.cpp
